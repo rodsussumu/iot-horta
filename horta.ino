@@ -6,6 +6,7 @@
 #define LDR A2
 #define LED_VERDE 12
 #define LED_VERMELHO 13
+#define Botao 8
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -16,6 +17,7 @@ void setup() {
   dht.begin();
   pinMode(LED_VERDE, OUTPUT);
   pinMode(LED_VERMELHO, OUTPUT);
+  pinMode(Botao, INPUT);
 }
 
 void loop() {
@@ -24,14 +26,13 @@ void loop() {
   int umidadeSolo = analogRead(Higrometro);
   int luminosidade = analogRead(LDR);
   int botaoAperta = digitalRead(Botao);
-  
 
     Serial.print(umidade);
     Serial.print(temperatura);
     Serial.print(umidadeSolo);
     Serial.print(luminosidade);
 
-    if(umidadeSolo > 511.5 && luminosidade > 450) {
+    if(umidadeSolo > 511.5 && luminosidade > 450 || botaoAperta == HIGH) {
         digitalWrite(LED_VERDE, HIGH);
         digitalWrite(LED_VERMELHO, LOW);    
         Serial.print("Irriga horta";)
