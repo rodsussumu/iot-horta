@@ -11,6 +11,29 @@
 
 DHT dht(DHTPIN, DHTTYPE);
 
+void leitura() {
+  int umidade = dht.readHumidity();
+  int temperatura = dht.readTemperature();
+  int umidadeSolo = analogRead(Higrometro);
+  int luminosidade = analogRead(LDR);
+  int botaoAperta = digitalRead(Botao);
+}
+
+void resposta() {
+  Serial.print(umidade);
+  Serial.print(temperatura);
+  Serial.print(umidadeSolo);
+  Serial.print(luminosidade);
+}
+
+boolean irriga() {
+  return (umidadeSolo > 511.5 && luminosidade > 450) || botaoAperta == HIGH;
+}
+
+boolean naoIrriga() {
+  return umidadeSolo < 511.5 && luminosidade < 450
+}
+
 void setup() {
   Serial.begin(9600);
   pinMode(Higrometro, INPUT);
@@ -23,28 +46,25 @@ void setup() {
   digitalWrite(Rele, LOW);
   }
 
+
 void loop() {
-  int umidade = dht.readHumidity();
-  int temperatura = dht.readTemperature();
-  int umidadeSolo = analogRead(Higrometro);
-  int luminosidade = analogRead(LDR);
-  int botaoAperta = digitalRead(Botao);
+  leitura();
 
-    Serial.print(umidade);
-    Serial.print(temperatura);
-    Serial.print(umidadeSolo);
-    Serial.print(luminosidade);
-
-    if(umidadeSolo > 511.5 && luminosidade > 450 || botaoAperta == HIGH) {
+    if(irriga() == true) {
         digitalWrite(LED_VERDE, HIGH);
         digitalWrite(LED_VERMELHO, LOW);
         digitalWrite(Rele, HIGH);  
         Serial.print("Irriga horta";)
-    } else {
+    } if(naoIrriga() == true) {
          digitalWrite(LED_VERMELHO, HIGH); 
          digitalWrite(LED_VERDE, LOW);
          digitalWrite(Rele, LOW);  
          Serial.print("Condiçoes invalidas, sem irrigação");
+    } else {
+      digitalWrite(Rele, LOW);
     }
+    
+  respostas();
+  delay(1500);
 
 }
